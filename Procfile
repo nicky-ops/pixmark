@@ -1,0 +1,1 @@
+web: gunicorn cosmic_canvas.wsgi --log-file -

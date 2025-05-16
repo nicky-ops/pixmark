@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  pixmark:
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./app:/app
+    command:
+      sh -c "python manage.py runserver 0.0.0.0:8080"
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
