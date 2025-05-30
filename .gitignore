@@ -2,3 +2,8 @@ terra*
 *.terra*
 .terraform/
 demo.tf
+.pixmark
+.env
+__pycache__/
+*.py[cod]
+**/__pycache__/
