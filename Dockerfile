@@ -1,29 +1,40 @@
-FROM python:3.9-slim
+# Stage 1: Builder
+FROM python:3.9-slim AS builder
 
-# Create the app directory
-RUN mkdir /app
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory inside the container
-WORKDIR /app
+WORKDIR /install
 
-# prevents Python from writing pyc files to disk
 ENV PYTHONDONTWRITEBYTECODE=1
-
-# Prevents Python from buffering stdout and stderr
 ENV PYTHONUNBUFFERED=1
 
-# Upgrade pip
+COPY requirements.txt .
+
 RUN pip install --upgrade pip
 
-# Copy the Django project and install dependancies
-COPY requirements.txt /app/
-RUN pip install --no-cache-dir -r requirements.txt
+# Install packages into /install directory
+RUN pip install --prefix=/install -r requirements.txt gunicorn Django==4.1.13
 
-# Copy the Django project to the container
-COPY app /app/
+# Stage 2: Runtime
+FROM python:3.9-slim
 
-# Expose the Django port
+RUN useradd -m -r appuser
+
+# Set work directory
+WORKDIR /app
+
+# Copy installed dependencies from builder
+COPY --from=builder /install /usr/local
+
+# Add /usr/local/bin to PATH to find gunicorn
+ENV PATH="/usr/local/bin:$PATH"
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Copy the Django app source code from host's ./app folder to container
+COPY --chown=appuser:appuser ./app /app
+
+USER appuser
 EXPOSE 8000
 
-# RUN DJANGO'S DEV SERVER
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "bookmarks.wsgi:application"]

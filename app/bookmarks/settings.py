@@ -13,16 +13,18 @@ import os
 import redis
 from pathlib import Path
 from django.urls import reverse_lazy
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get("DEBUG", default=0))
@@ -61,6 +63,7 @@ INSTALLED_APPS = [
     'easy_thumbnails',
     'actions.apps.ActionsConfig',
     'debug_toolbar',
+    'core'
 ]
 
 MIDDLEWARE = [
@@ -169,9 +172,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
-
-import os
-import redis
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")  # Default to localhost for development
 
