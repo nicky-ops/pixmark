@@ -1,9 +1,10 @@
-# This workflow builds and publishes Docker images when a pull request is merged to the main branch
+# This workflow builds and publishes Docker images when a release is made
 name: Publish Docker image
 
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   push_to_registry:
