@@ -9,6 +9,7 @@ pipeline {
         withCredentials([file(credentialsId: 'pixmark-env-file', variable: 'DOTENV')]) {
           sh '''
             docker pull $IMAGE_NAME
+            sh 'ls -la && whoami && pwd'
             cp $DOTENV .env
             docker compose -f compose.prod.yml up -d
           '''
