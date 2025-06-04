@@ -10,6 +10,7 @@ pipeline {
           sh '''
             docker pull $IMAGE_NAME
             ls -la && whoami && pwd
+            rm -f .env
             cp $DOTENV .env
             docker compose -f compose.prod.yml up -d
           '''
