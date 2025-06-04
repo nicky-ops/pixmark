@@ -6,10 +6,10 @@ pipeline {
   stages {
     stage('Deploy') {
       steps {
-        withCredentials([file(credentialsId: 'pixmark-env-file', variable: 'ENV_FILE')]) {
+        withCredentials([file(credentialsId: 'pixmark-env-file', variable: 'DOTENV')]) {
           sh '''
             docker pull $IMAGE_NAME
-            cp $ENV_FILE .env
+            cp $DOTENV .env
             docker compose -f compose.prod.yml up -d
           '''
         }
