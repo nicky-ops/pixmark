@@ -50,3 +50,8 @@ jobs:
           subject-name: index.docker.io/nickyops/pixmark
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
+
+      - name: Trigger Jenkins Deploy Job
+        if: success()
+        run: |
+          curl -X POST "${{ secrets.JENKINS_URL }}/job/pixmark-deploy/build?token=${{ secrets.JENKINS_DEPLOY_TOKEN }}"
