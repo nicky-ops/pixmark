@@ -41,7 +41,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Generate artifact attestation
-        uses: actions/attest-build-pprovenance@v2
+        uses: actions/attest-build-provenance@v2
         with:
           subject-name: index.docker.io/nickyops/portfolio
           subject-digest: ${{ steps.push.outputs.digest }}
