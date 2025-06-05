@@ -16,6 +16,7 @@ oauthlib==3.2.2
 packaging==25.0
 Pillow==9.2.0
 psycopg[binary]
+psycopg2-binary
 pycparser==2.22
 PyJWT==2.8.0
 pyOpenSSL==22.0.0
