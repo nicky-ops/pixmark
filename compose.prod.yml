@@ -1,25 +1,61 @@
-version: "3.9"
-
 services:
   redis:
     image: redis:7-alpine
     restart: always
     volumes:
       - redis_data:/data
+    networks:
+      - portfolio-net
+
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - portfolio-net
 
   pixmark:
     image: nickyops/pixmark:latest
     restart: always
     ports:
       - "8000:8000"
-    env_file:
-      - .env
     depends_on:
       - redis
-    volumes:
-      - ./db.sqlite3:/app/db.sqlite3
+      - db
     environment:
-      REDIS_URL: redis://redis:6379/0
+      REDIS_URL: ${REDIS_URL}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DEBUG: ${DEBUG}
+      DJANGO_LOGLEVEL: ${DJANGO_LOGLEVEL}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS}
+      DATABASE_ENGINE: ${DATABASE_ENGINE}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+    env_file:
+      - .env
+    networks:
+      - portfolio-net
 
 volumes:
   redis_data:
+  postgres_data:
+
+networks:
+  portfolio-net:
+    driver: bridge
