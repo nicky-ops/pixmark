@@ -16,6 +16,8 @@ services:
       - .env
     depends_on:
       - redis
+    volumes:
+      - ./db.sqlite3:/app/db.sqlite3
     environment:
       REDIS_URL: redis://redis:6379/0
 
